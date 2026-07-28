@@ -1,0 +1,14 @@
+Veldt Wisp — third-party notices
+
+The following bundled assets are the work of third parties and are used under
+the Apache License 2.0. This file records that; it imposes no condition on
+Veldt Wisp itself, which is MIT-licensed (see LICENSE).
+
+* app/src/main/res/drawable/ic_album_placeholder.xml
+  Pictogrammers "Material Design Light" icon set — Apache License 2.0.
+
+* app/src/main/res/drawable/ic_stat_music.xml
+  Google Material Symbols (Light Rounded) — Apache License 2.0.
+
+A copy of the Apache License 2.0 is available at
+https://www.apache.org/licenses/LICENSE-2.0
