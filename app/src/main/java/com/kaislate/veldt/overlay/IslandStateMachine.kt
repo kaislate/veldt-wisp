@@ -1,3 +1,6 @@
+// Copyright (c) 2026 kaislate
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package com.kaislate.veldt.overlay
 
 import android.media.session.PlaybackState

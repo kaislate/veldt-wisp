@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- **Relicensed from MIT to GPL-3.0-or-later.** Veldt Wisp stays free software,
+  but a distributed modification must now carry the same licence and ship its
+  source. Releases up to and including 0.7.1 remain available under MIT.
+- Every Kotlin source file carries an SPDX header.
+
 ## 0.7.1
 
 - The codebase has been rewritten clean-room: every file was reauthored from a

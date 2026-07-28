@@ -107,4 +107,10 @@ Compose/Kotlin style.
 
 ## 📄 Credits & license
 
-Licensed under the [MIT License](LICENSE).
+Licensed under the [GNU General Public License v3.0 or later](LICENSE).
+
+Veldt Wisp is free software: you may use, study, share and modify it. If you
+distribute a modified version, it must carry the same licence and ship its
+source, so every user keeps those freedoms.
+
+Bundled third-party assets are listed in [NOTICE](NOTICE).
