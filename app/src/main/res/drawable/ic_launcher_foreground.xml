@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- pill body -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M34,44 h40 a10,10 0 0 1 0,20 h-40 a10,10 0 0 1 0,-20 z"/>
+    <!-- album-art dot -->
+    <path android:fillColor="#2E5E33"
+        android:pathData="M36,54 m-6,0 a6,6 0 1 0 12,0 a6,6 0 1 0 -12,0"/>
+    <!-- two 'track text' bars -->
+    <path android:fillColor="#2E5E33"
+        android:pathData="M48,50 h22 v3 h-22 z M48,56 h14 v3 h-14 z"/>
+</vector>

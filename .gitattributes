@@ -1,0 +1,5 @@
+# Keep the Gradle wrapper scripts at their required line endings regardless of
+# a contributor's core.autocrlf setting.
+gradlew        text eol=lf
+gradlew.bat    text eol=crlf
+*.jar          binary

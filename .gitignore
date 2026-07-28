@@ -1,0 +1,63 @@
+# Veldt Wisp — ignore rules.
+#
+# Keep comments on their own line. A "#" written after a pattern becomes part
+# of the pattern and silently disables it; two rules here were dead that way.
+
+# Gradle
+.gradle/
+build/
+**/build/
+**/output.json
+local.properties
+
+# Release signing — the keystore and its passwords stay on the build machine.
+# The build falls back to unsigned when they are absent.
+key.properties
+keystore/
+*.jks
+*.keystore
+
+# Build artefacts
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+/app/libs/
+
+# Internal planning, specs and agent scratch — not for the public repo
+docs/
+.superpowers/
+
+# Test and coverage output
+/test-results/
+/androidTest-results/
+/coverage/
+*.ec
+
+# IDE
+*.iml
+.idea/
+.ksp/
+.cxx/
+captures/
+
+# Compose preview scratch
+**/composePreview/
+**/*.preview.png
+
+# Editor and temporary files
+*.bak
+*.tmp
+*.swp
+*.swo
+*.hprof
+*.log
+
+# Node, if a WebView asset pipeline ever appears
+node_modules/
+
+# OS clutter
+.DS_Store
+Thumbs.db

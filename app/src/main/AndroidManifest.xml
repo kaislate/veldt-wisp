@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- OverlayWindowManager hands its ComposeView straight to WindowManager, outside
+         any activity; addView fails without this special access. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- IslandForegroundService stays foregrounded for as long as a media session is
+         loaded. The second grant is what lets it declare the mediaPlayback type below. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <!-- Asked for at runtime so the service's ongoing notification is actually visible.
+         The attribute below scopes lint to the release that introduced the grant. -->
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        tools:targetApi="33" />
+
+    <!-- Optional: shows the real Bluetooth device name (e.g. "Galaxy Buds Live")
+         in the output-device row instead of a generic "Bluetooth audio" label -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- UsageStatsRepository reads the foreground-app event stream through this. It is
+         special access rather than a runtime prompt, so declaring it grants nothing on
+         its own and the user has to enable it from system settings; the suppression is
+         because a bare declaration looks like an over-reach to lint. -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Manual update checker: only used when the user taps "Check for updates" -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Package visibility (Android 11+):
+         - HOME intent: lets launcherPackages() see which apps are home screens,
+           for the home-only mode.
+         - MAIN/LAUNCHER intent: makes launchable apps visible so
+           getLaunchIntentForPackage() can resolve the playing app when the user
+           taps the panel to open it. Without this, the call silently returns
+           null on A11+ and tapping does nothing. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".app.VeldtApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.VeldtWisp"
+        android:usesCleartextTraffic="false"
+        android:hardwareAccelerated="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.VeldtWisp"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- The system binds this once the user turns on notification access. It is the
+             app's only route to MediaSessionManager, and therefore to the controller
+             every playback read and transport command goes through. -->
+        <service
+            android:name=".services.MediaNotificationListener"
+            android:exported="true"
+            android:label="Media notification listener"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Owns the overlay window's lifetime: it runs the state machine that decides
+             whether the pill belongs on screen right now, and outlives the pill itself
+             so a hidden pill can come back. Not exported; started from within the app. -->
+        <service
+            android:name=".services.IslandForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <!-- FileProvider for sharing the downloaded update APK with the package installer -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>
