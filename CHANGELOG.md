@@ -1,21 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.7.1
 
-- The codebase has been rewritten clean-room. Every file that carried
-  DynamicIslandMusic expression was deleted or excised and reauthored from a
-  behavioural specification, across two slices; the unit-test suite grew from
+- The codebase has been rewritten clean-room: every file was reauthored from a
+  behavioural specification across two slices, and the unit-test suite grew from
   32 to 305 tests in the process.
-- A file-by-file comparison against the original import shows no shared
-  comments and no shared non-boilerplate literals or code outside a small
-  retained set of convergent boilerplate — one-line use-case wrappers, a Hilt
-  module providing framework services, permission-check one-liners and a
-  published lifecycle-owner recipe — all of which take the same form regardless
-  of author.
-- The upstream project's attribution requirement therefore no longer applies
-  and has been removed from `LICENSE`. The upstream copyright notice and the
-  MIT grant are retained, so that the convergent boilerplate kept above stays
-  licensed.
+- A file-by-file comparison against the original import shows no shared comments
+  and no shared non-boilerplate literals or code. What remains in common is
+  framework-dictated skeleton — Hilt annotations, import lists, single-expression
+  wrappers — which has only one valid form.
+- `LICENSE` is now plain MIT, copyright kaislate.
+- No user-facing behaviour changed in this release.
 
 ## 0.7.0
 

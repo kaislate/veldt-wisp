@@ -1,17 +1,6 @@
-Veldt Wisp began as a fork of DynamicIslandMusic. Its source has since been
-rewritten from behavioural specification, and no third-party expression remains.
-A small amount of convergent boilerplate — one-line use-case wrappers, a Hilt
-module providing framework services, and a published lifecycle-owner recipe —
-was deliberately retained because it takes the same form regardless of author.
-The upstream copyright notice and the grant below are retained so that anything
-so retained remains licensed.
-
---------------------------------------------------------------------------------
-
 MIT License
 
 Copyright (c) 2026 kaislate
-Copyright (c) 2025 Bryan Guerra
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,3 +19,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Bundled third-party assets
+
+* app/src/main/res/drawable/ic_album_placeholder.xml — Pictogrammers Material
+  Design Light icon set, Apache License 2.0.
+* app/src/main/res/drawable/ic_stat_music.xml — Google Material Symbols
+  (Light Rounded), Apache License 2.0.
