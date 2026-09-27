@@ -1,5 +1,9 @@
-# Keep the Gradle wrapper scripts at their required line endings regardless of
-# a contributor's core.autocrlf setting.
-gradlew        text eol=lf
-gradlew.bat    text eol=crlf
-*.jar          binary
+# Keep LF line endings in every checkout, including Windows, so a release built here matches
+# F-Droid's Linux build byte for byte (reproducible builds).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.jar binary
+*.ttf binary
+*.otf binary
