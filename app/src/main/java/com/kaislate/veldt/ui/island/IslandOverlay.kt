@@ -134,7 +134,6 @@ fun IslandRoot(
     onBoundsChanged: (androidx.compose.ui.geometry.Rect) -> Unit,
     onStashSwipe: () -> Unit = {},
     vibrant: Boolean = false,
-    fixedWindow: Boolean = true,
     position: IslandPosition = IslandPosition.TOP_CENTER,
     thumbShape: String = "circle",
     waveColorMode: String = "auto",
@@ -147,16 +146,12 @@ fun IslandRoot(
     waveStyle: String = "hills",
     consume: Boolean = false
 ) {
-    // On API 33+ the host window is a FIXED panel-sized rectangle; content anchors
-    // top-center and the reported bounds drive the window's touchable region, so
-    // transparent areas pass touches through to whatever is beneath. Below API 33
-    // the window itself is WRAP_CONTENT (resized on expand/collapse instead), so
-    // the root Box must NOT fill the (already content-sized) window — filling it
-    // there would just re-create the touch dead-zone the legacy window mode exists
-    // to avoid.
+    // The host window is WRAP_CONTENT, so the root Box must NOT fill it — any
+    // transparent margin in an overlay window is a dead zone that eats taps meant
+    // for the app beneath (see OverlayWindowManager.setExpanded).
     val springSpec = spring<Float>(dampingRatio = 0.85f, stiffness = 380f)
     Box(
-        modifier = (if (fixedWindow) Modifier.fillMaxSize() else Modifier)
+        modifier = Modifier
             // While expanded, a tap on the window's transparent margin collapses
             // the panel (taps fully outside the window arrive as ACTION_OUTSIDE).
             .pointerInput(expanded) {
