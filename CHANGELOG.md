@@ -1,8 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.7.3
 
-- F-Droid build flavor without the in-app updater.
+- **Coming to F-Droid.** A separate F-Droid build without the in-app updater, which F-Droid
+  does not allow. The GitHub build keeps "Check for updates" as before.
+- The GitHub build's updater now picks exactly its own APK from a release, never the F-Droid one.
+- Support the project on Liberapay (link in the README).
 
 ## 0.7.2
 

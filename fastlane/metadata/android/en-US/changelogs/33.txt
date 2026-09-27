@@ -1,0 +1,1 @@
+Coming to F-Droid: a separate F-Droid build without the in-app updater. The GitHub build keeps "Check for updates", and its updater now always picks its own APK.

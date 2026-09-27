@@ -105,6 +105,11 @@ without it, both release tasks produce an unsigned APK.
 - True audio-reactive motion (Visualizer API — make the waves dance to the bass).
 - Per-app blocklist.
 
+## 💛 Support
+
+Veldt Wisp is free and has no ads or tracking. If you'd like to support its development, you can on
+[Liberapay](https://liberapay.com/kaislate).
+
 ## 🤝 Contributing
 
 Issues and pull requests are welcome. If you're reporting a bug, please include

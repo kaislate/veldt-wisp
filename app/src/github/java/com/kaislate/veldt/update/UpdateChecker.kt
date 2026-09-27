@@ -29,6 +29,20 @@ object UpdateChecker {
     private const val USER_AGENT = "VeldtWisp-Updater"
 
     /**
+     * The download url of this build's APK among a release's (name, url) assets.
+     *
+     * A release also carries the F-Droid build (`veldt-wisp-<v>-fdroid.apk`), published so
+     * F-Droid can verify its reproducible build. That APK has no updater, so this build must
+     * never offer it. The exact name `veldt-wisp-<version>.apk` wins; failing that, any `.apk`
+     * that is not an F-Droid build, so older releases with other names still resolve.
+     */
+    internal fun pickApkUrl(assets: List<Pair<String, String>>, version: String): String? {
+        val apks = assets.filter { (name, url) -> name.endsWith(".apk") && url.isNotBlank() }
+        return (apks.firstOrNull { it.first == "veldt-wisp-$version.apk" }
+            ?: apks.firstOrNull { !it.first.endsWith("-fdroid.apk") })?.second
+    }
+
+    /**
      * Checks GitHub's latest release against [currentVersion].
      * Returns null when there is no newer release or the release has no `.apk` asset.
      * Network/parse failures propagate as exceptions so the caller can surface them.
@@ -55,17 +69,15 @@ object UpdateChecker {
         val notes = json.optString("body", "")
 
         val assets = json.optJSONArray("assets")
-        var apkUrl: String? = null
-        if (assets != null) {
-            for (i in 0 until assets.length()) {
-                val asset = assets.getJSONObject(i)
-                val name = asset.optString("name", "")
-                if (name.endsWith(".apk")) {
-                    apkUrl = asset.optString("browser_download_url", "")
-                    break
+        val named = buildList {
+            if (assets != null) {
+                for (i in 0 until assets.length()) {
+                    val asset = assets.getJSONObject(i)
+                    add(asset.optString("name", "") to asset.optString("browser_download_url", ""))
                 }
             }
         }
+        val apkUrl = pickApkUrl(named, remoteVersion)
         if (apkUrl.isNullOrBlank()) return@withContext null
 
         if (isNewer(remoteVersion, currentVersion)) {

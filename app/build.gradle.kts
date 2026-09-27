@@ -28,8 +28,8 @@ android {
         applicationId = "com.kaislate.veldt"
         minSdk = 29
         targetSdk = 36
-        versionCode = 32
-        versionName = "0.7.2"
+        versionCode = 33
+        versionName = "0.7.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
