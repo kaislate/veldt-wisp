@@ -18,13 +18,11 @@ import java.net.URL
  *
  * Only ever hits the network when the user explicitly taps "Check for updates" —
  * no background polling, no analytics, no third-party services.
+ *
+ * This is the `github` flavor's implementation. The `fdroid` flavor compiles an
+ * inert object of the same name instead, because F-Droid does not accept apps that
+ * download and install APKs themselves; F-Droid delivers the updates there.
  */
-data class UpdateInfo(
-    val version: String,
-    val apkUrl: String,
-    val notes: String
-)
-
 object UpdateChecker {
 
     private const val RELEASES_URL = "https://api.github.com/repos/kaislate/veldt-wisp/releases/latest"
@@ -90,7 +88,6 @@ object UpdateChecker {
         return false
     }
 
-    /** Downloads the APK to cache and launches the system installer. */
     /** Downloads the APK to cache and returns the file (no install prompt yet). */
     suspend fun download(ctx: Context, info: UpdateInfo): File = withContext(Dispatchers.IO) {
         require(info.apkUrl.startsWith("https://")) { "Insecure update URL" }

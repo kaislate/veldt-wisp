@@ -238,8 +238,14 @@ class SettingsViewModel @Inject constructor(
 
     // ---- the updater -------------------------------------------------------------------
 
-    /** Asks GitHub whether there is a newer release than this build. */
+    /**
+     * Asks GitHub whether there is a newer release than this build.
+     *
+     * A no-op in a build without the updater (the F-Droid flavor). Letting the check
+     * run there would land on "Up to date" — a claim this build has no way to make.
+     */
     fun checkForUpdates() {
+        if (!BuildConfig.UPDATER_ENABLED) return
         viewModelScope.launch {
             _updateState.value = UpdateState.Checking
             _updateState.value = try {
