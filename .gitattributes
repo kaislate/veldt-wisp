@@ -7,3 +7,6 @@
 *.jar binary
 *.ttf binary
 *.otf binary
+# Windows batch scripts keep CRLF; cmd.exe can misparse labels in LF files.
+gradlew.bat text eol=crlf
+*.bat text eol=crlf
