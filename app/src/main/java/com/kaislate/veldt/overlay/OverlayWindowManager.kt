@@ -45,14 +45,14 @@ class OverlayWindowManager @Inject constructor(
     // Expanded-panel state lives here so the outside-touch listener can collapse it.
     private val expandedState = androidx.compose.runtime.mutableStateOf(false)
 
-    // Legacy (pre-33 / 35+) expansion uses a SECOND window: the pill window never
+    // Expansion uses a SECOND window: the pill window never
     // resizes (window resizes can't be frame-synced with content and always lurch
     // sideways), and the morph plays inside a separate fixed panel-sized window
     // that exists only while expanded — so there's never a dead-zone either.
     private var bigView: ComposeView? = null
     private var bigOwner: OverlayOwner? = null
 
-    // Separate-entity animation states (two-window mode): the pill fades out
+    // Separate-entity animation states: the pill fades out
     // while the panel fades/scales in as its own surface, and vice versa.
     private val pillHiddenState = androidx.compose.runtime.mutableStateOf(false)
     private val panelVisibleState = androidx.compose.runtime.mutableStateOf(false)
@@ -62,47 +62,23 @@ class OverlayWindowManager @Inject constructor(
     @Volatile private var currentOffsetDp: Int = 40
 
     private companion object {
-        const val WINDOW_WIDTH_DP = 424
         const val WINDOW_HEIGHT_DP = 320
     }
 
-    // API 33/34 ONLY: AttachedSurfaceControl.setTouchableRegion lets the window stay
-    // a fixed panel-sized rect with touches routed via the region. Below 33 the API
-    // doesn't exist; on 35+ the system no longer reliably honors the region for
-    // untrusted overlays (observed on Android 15: dead-zone around the pill plus an
-    // "app isn't optimized / touches may be delayed" warning). Everywhere outside
-    // 33..34 the window itself is resized to the content — which is also Google's
-    // documented pattern for overlay touch pass-through.
-    private val useRegionApi = android.os.Build.VERSION.SDK_INT in 33..34
-
+    // Every API level uses the same two windows: a content-sized pill window, and a
+    // panel window that exists only while expanded. API 33/34 used to keep ONE fixed
+    // panel-sized window and let AttachedSurfaceControl.setTouchableRegion pass
+    // touches through its transparent parts — but Android 12+ judges untrusted-overlay
+    // occlusion on the window's FRAME, not its touchable region, so every tap under
+    // that invisible rectangle was dropped ("Untrusted touch due to occlusion …
+    // obscuring opacity = 1.00, maximum allowed = 0.80"; measured on an API 33 S20 FE,
+    // 2026-09-27). A window sized to what it draws is Google's documented pattern for
+    // overlay touch pass-through.
+    //
+    // The morph plays in the panel window; the pill window is simply hidden meanwhile.
+    // Neither window ever resizes, so nothing can lurch.
     private fun setExpanded(value: Boolean) {
-        if (useRegionApi) {
-            // API 33/34: the single window NEVER resizes — only the dim/modal
-            // flags change with expansion; the touchable region routes touches.
-            val v = root ?: run { expandedState.value = value; return }
-            val lp = v.layoutParams as? WindowManager.LayoutParams ?: run {
-                expandedState.value = value; return
-            }
-            if (value) {
-                // While expanded: dim behind AND make the window touch-modal, so
-                // every tap outside it is delivered to us (with out-of-bounds
-                // coordinates) and can collapse the panel.
-                lp.flags = (lp.flags or WindowManager.LayoutParams.FLAG_DIM_BEHIND) and
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL.inv()
-                lp.dimAmount = 0.35f
-            } else {
-                lp.flags = (lp.flags and WindowManager.LayoutParams.FLAG_DIM_BEHIND.inv()) or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                lp.dimAmount = 0f
-            }
-            expandedState.value = value
-            runCatching { wm.updateViewLayout(v, lp) }
-        } else {
-            // Everywhere else: the morph plays in a dedicated fixed-size panel
-            // window; the pill window is simply hidden meanwhile. Neither window
-            // ever resizes, so nothing can lurch.
-            if (value) openPanelWindow() else closePanelWindow()
-        }
+        if (value) openPanelWindow() else closePanelWindow()
     }
 
     private fun panelLayoutParams(): WindowManager.LayoutParams =
@@ -217,43 +193,20 @@ class OverlayWindowManager @Inject constructor(
 
     private fun windowWidthDp(): Int = panelWidthDpSetting + 24
 
+    // The panel window reads it when it opens; the pill window sizes itself to its content.
     private fun applyPanelWidth(dp: Int) {
         panelWidthDpSetting = dp
-        if (!useRegionApi) return // legacy windows size themselves on expand
-        val v = root ?: return
-        val lp = v.layoutParams as? WindowManager.LayoutParams ?: return
-        val w = dpToPx(windowWidthDp())
-        if (lp.width != w) {
-            lp.width = w
-            runCatching { wm.updateViewLayout(v, lp) }
-        }
     }
 
     /**
-     * Keeps the window's touchable area (and system-gesture exclusion) glued to the
-     * island content's current bounds — pill, panel, or anything mid-animation.
-     * Everything else in the fixed-size window is transparent AND touch-transparent.
+     * Keeps the system-gesture exclusion glued to the pill's current bounds, including
+     * mid-animation.
      */
     private fun updateIslandBounds(bounds: androidx.compose.ui.geometry.Rect) {
         val v = root ?: return
-        val r = Rect(
-            bounds.left.toInt(), bounds.top.toInt(),
-            bounds.right.toInt(), bounds.bottom.toInt()
+        v.systemGestureExclusionRects = listOf(
+            Rect(bounds.left.toInt(), bounds.top.toInt(), bounds.right.toInt(), bounds.bottom.toInt())
         )
-        v.systemGestureExclusionRects = listOf(r)
-        if (useRegionApi) {
-            // Collapsed: only the pill is touchable (everything else passes through).
-            // Expanded: region must cover the WHOLE SCREEN — the input dispatcher
-            // applies the touchable region before window modality, so a merely
-            // window-sized region would swallow the modal flag and outside taps
-            // would never reach us.
-            val region = if (expandedState.value) {
-                android.graphics.Region(-10000, -10000, 20000, 20000)
-            } else {
-                android.graphics.Region(r)
-            }
-            runCatching { v.rootSurfaceControl?.setTouchableRegion(region) }
-        }
     }
 
     /**
@@ -307,20 +260,15 @@ class OverlayWindowManager @Inject constructor(
     }
 
     /**
-     * Layout params for the pill's own window.
-     *
-     * Sizing splits on [useRegionApi]: in region mode the window stays a fixed
-     * panel-sized rectangle forever and the touchable region (see
-     * [updateIslandBounds]) is what lets touches through the transparent parts.
-     * Anywhere else there is no usable region API, so the window is sized to its
-     * content — a fixed window there would ring the pill with a dead zone that
-     * eats taps meant for the app underneath.
+     * Layout params for the pill's own window, sized to its content: any transparent
+     * margin would be a dead zone that eats taps meant for the app underneath (see
+     * [setExpanded] for why a touchable region cannot fix that).
      */
     private fun pillLayoutParams(): WindowManager.LayoutParams {
         val wrap = WindowManager.LayoutParams.WRAP_CONTENT
         return WindowManager.LayoutParams(
-            if (useRegionApi) dpToPx(windowWidthDp()) else wrap,
-            if (useRegionApi) dpToPx(WINDOW_HEIGHT_DP) else wrap,
+            wrap,
+            wrap,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE       // never steal focus / close the IME
                     or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL   // taps outside go to what's below
@@ -370,27 +318,25 @@ class OverlayWindowManager @Inject constructor(
                 val pillControlPosition by settingsRepo.pillControlPositionFlow.collectAsState(initial = "right")
                 val waveStyle by settingsRepo.waveStyleFlow.collectAsState(initial = "wisptrail")
                 val consumeProgress by settingsRepo.consumeProgressFlow.collectAsState(initial = true)
-                val expanded by expandedState
                 val pillHidden by pillHiddenState
 
                 val position = IslandPosition.fromKey(positionKey)
                 LaunchedEffect(position, topOffsetDp) { applyPlacement(position, topOffsetDp) }
                 LaunchedEffect(panelWidthDp) { applyPanelWidth(panelWidthDp) }
 
-                // Two-window mode hands the pill's pixels to the panel window
-                // while expanded, so the pill dissolves rather than vanishing.
-                // Region mode has a single window: this stays pinned at 1f.
+                // The panel window takes over the pill's pixels while expanded,
+                // so the pill dissolves rather than vanishing.
                 val pillAlpha = animateFloatAsState(
-                    targetValue = if (!useRegionApi && pillHidden) 0f else 1f,
+                    targetValue = if (pillHidden) 0f else 1f,
                     animationSpec = tween(150),
                     label = "pill-dissolve"
                 )
 
                 Box(modifier = Modifier.graphicsLayer { alpha = pillAlpha.value }) {
                     IslandRoot(
-                        // In two-window mode the panel is a separate window;
-                        // this one only ever draws the collapsed pill.
-                        expanded = useRegionApi && expanded,
+                        // The panel is a separate window; this one only ever
+                        // draws the collapsed pill.
+                        expanded = false,
                         onExpand = { setExpanded(true) },
                         onCollapse = { setExpanded(false) },
                         onBoundsChanged = { updateIslandBounds(it) },
@@ -402,7 +348,6 @@ class OverlayWindowManager @Inject constructor(
                             )
                         },
                         vibrant = vibrant,
-                        fixedWindow = useRegionApi,
                         position = position,
                         thumbShape = thumbShape,
                         waveColorMode = waveColorMode,
@@ -419,12 +364,12 @@ class OverlayWindowManager @Inject constructor(
             }
 
             cv.setOnTouchListener { v, ev ->
-                // Collapsed, this window is not touch-modal and every event
-                // belongs to Compose — bail out before looking at coordinates.
+                // Collapsed, every event belongs to Compose — bail out before
+                // looking at coordinates.
                 if (!expandedState.value) return@setOnTouchListener false
-                // While expanded the window IS touch-modal, so a tap beyond it
-                // may arrive either as ACTION_OUTSIDE or as an ordinary DOWN
-                // carrying out-of-range coordinates.
+                // While the panel window is open, a tap beyond this one may arrive
+                // either as ACTION_OUTSIDE or as an ordinary DOWN carrying
+                // out-of-range coordinates.
                 val outside = ev.actionMasked == MotionEvent.ACTION_OUTSIDE ||
                     (ev.actionMasked == MotionEvent.ACTION_DOWN &&
                         (ev.x < 0f || ev.y < 0f || ev.x > v.width || ev.y > v.height))
