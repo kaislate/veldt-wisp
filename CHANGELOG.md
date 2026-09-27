@@ -1,7 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.7.2
 
+- **Fixed: on Android 13 and 14 the pill no longer blocks taps around it.** The collapsed
+  pill used to sit in a large invisible window, and Android dropped every tap that landed
+  under it, so a band across the top of the screen stopped responding. The pill's window
+  is now only as big as the pill, as it already was on other Android versions.
+- **The icon's dot is now orange**, the accent shared with Veldt's new icon.
 - **Relicensed from MIT to GPL-3.0-or-later.** Veldt Wisp stays free software,
   but a distributed modification must now carry the same licence and ship its
   source. Releases up to and including 0.7.1 remain available under MIT.
