@@ -28,6 +28,12 @@ class ApkAssetPickTest {
     }
 
     @Test
+    fun `the dot-named fdroid apk is never offered either`() {
+        val dotted = "veldt-wisp-0.7.4.fdroid.apk" to "https://example/dotted"
+        assertNull(UpdateChecker.pickApkUrl(listOf(dotted), "0.7.3"))
+    }
+
+    @Test
     fun `an older release with another apk name still resolves`() {
         val old = "app-release.apk" to "https://example/old"
         assertEquals("https://example/old", UpdateChecker.pickApkUrl(listOf(fdroid, old), "0.7.3"))

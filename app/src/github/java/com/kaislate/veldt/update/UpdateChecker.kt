@@ -34,12 +34,13 @@ object UpdateChecker {
      * A release also carries the F-Droid build (`veldt-wisp-<v>-fdroid.apk`), published so
      * F-Droid can verify its reproducible build. That APK has no updater, so this build must
      * never offer it. The exact name `veldt-wisp-<version>.apk` wins; failing that, any `.apk`
-     * that is not an F-Droid build, so older releases with other names still resolve.
+     * whose name does not mention `fdroid` (whatever its separator), so older releases with other
+     * names still resolve.
      */
     internal fun pickApkUrl(assets: List<Pair<String, String>>, version: String): String? {
         val apks = assets.filter { (name, url) -> name.endsWith(".apk") && url.isNotBlank() }
         return (apks.firstOrNull { it.first == "veldt-wisp-$version.apk" }
-            ?: apks.firstOrNull { !it.first.endsWith("-fdroid.apk") })?.second
+            ?: apks.firstOrNull { !it.first.contains("fdroid") })?.second
     }
 
     /**

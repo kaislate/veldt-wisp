@@ -1,0 +1,1 @@
+Much smaller download: 55 MB to 4.3 MB, with no change in behaviour. The GitHub build's updater skips any F-Droid APK on a release.
