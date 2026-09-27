@@ -4,8 +4,8 @@
     <!-- pill body -->
     <path android:fillColor="#FFFFFF"
         android:pathData="M34,44 h40 a10,10 0 0 1 0,20 h-40 a10,10 0 0 1 0,-20 z"/>
-    <!-- album-art dot -->
-    <path android:fillColor="#2E5E33"
+    <!-- album-art dot, in the orange of Veldt's record label (the two apps' shared accent) -->
+    <path android:fillColor="#E07A3A"
         android:pathData="M36,54 m-6,0 a6,6 0 1 0 12,0 a6,6 0 1 0 -12,0"/>
     <!-- two 'track text' bars -->
     <path android:fillColor="#2E5E33"
