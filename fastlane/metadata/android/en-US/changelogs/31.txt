@@ -1,0 +1,2 @@
+- The codebase was rewritten clean-room from a behavioural specification, and the unit-test suite grew from 32 to 305 tests.
+- No user-facing behaviour changed in this release.

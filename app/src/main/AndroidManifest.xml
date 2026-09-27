@@ -29,9 +29,10 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
-    <!-- Manual update checker: only used when the user taps "Check for updates" -->
+    <!-- Some media apps publish their cover art only as an http(s) URI in the session
+         metadata; MediaNotificationListener hands that URI to Coil, which needs this to
+         fetch it. The GitHub build's update check also uses it (see src/github). -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Package visibility (Android 11+):
          - HOME intent: lets launcherPackages() see which apps are home screens,
@@ -98,15 +99,8 @@
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
-        <!-- FileProvider for sharing the downloaded update APK with the package installer -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+        <!-- The in-app updater's install permission and FileProvider are not here: they
+             are merged in from src/github/AndroidManifest.xml, so the F-Droid build never
+             declares them. -->
     </application>
 </manifest>

@@ -36,7 +36,7 @@ Born to bring Samsung's One UI 8/9 *Now Bar* experience to a de-Googled LineageO
 - **Stays out of the way** — hides while you're inside the app that's playing, reappears everywhere else; only the pill's own pixels are touchable — everything around it clicks straight through.
 - **Six positions** — anchor the pill top or bottom, left / center / right; the morph, edge offset, and gestures all adapt to the anchor.
 - **Swipe to stash** — flick the pill toward the screen edge to tuck it into a notification; tap to bring it back. Or enable **home-screen-only mode** so it lives on your launcher and nowhere else.
-- **Built-in updates** — a manual "Check for updates" button against GitHub Releases. No background phone-home, ever.
+- **Built-in updates** *(GitHub build)* — a manual "Check for updates" button against GitHub Releases. No background phone-home, ever. The F-Droid build leaves this out; F-Droid updates it instead.
 - **Featherweight** — pure Kotlin / Jetpack Compose, **zero native code** (runs on 32-bit relics and modern arm64 alike), **zero Google Play Services**, **zero network access** — except the manual update check you trigger yourself.
 
 ## 🌊 Scrub-bar animations
@@ -84,12 +84,20 @@ Grab the APK from [Releases](../../releases), install it, open **Veldt Wisp**, a
 ```
 git clone https://github.com/kaislate/veldt-wisp.git
 cd veldt-wisp
-./gradlew assembleDebug
+./gradlew assembleGithubDebug
 ```
 
-Requires JDK 17+ and the Android SDK (compileSdk 36). Release builds are signed
-with a local keystore via an untracked `key.properties`; without it,
-`assembleRelease` produces an unsigned APK.
+Requires JDK 17+ and the Android SDK (compileSdk 36).
+
+There are two build flavors of the same app (same application ID):
+
+| Task | Flavor | Differences |
+|------|--------|-------------|
+| `./gradlew assembleGithubRelease` | **GitHub** — the APK on [Releases](../../releases) | Includes the in-app updater ("Check for updates", the install-packages permission). |
+| `./gradlew assembleFdroidRelease` | **F-Droid** | No updater at all — no update code, no update UI, no `REQUEST_INSTALL_PACKAGES`. F-Droid delivers the updates. |
+
+Release builds are signed with a local keystore via an untracked `key.properties`;
+without it, both release tasks produce an unsigned APK.
 
 ## 🗺️ Roadmap
 

@@ -636,6 +636,10 @@ private fun AboutCard(vm: SettingsViewModel, updateState: UpdateState) {
         Spacer(Modifier.height(8.dp))
         TextButton(onClick = { openUrl(ctx, PROJECT_URL) }) { Text("Project on GitHub") }
 
+        // The F-Droid build has no updater (F-Droid delivers its updates), so it shows
+        // no update control at all rather than one that can never find anything.
+        if (!BuildConfig.UPDATER_ENABLED) return@SettingsCard
+
         // Only 4.dp: the two text buttons already carry their own generous vertical
         // padding, so the usual 12.dp sub-block gap reads as a hole between them.
         Spacer(Modifier.height(4.dp))

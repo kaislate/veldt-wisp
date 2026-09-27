@@ -34,6 +34,31 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // F-Droid will not ship an app that downloads and installs APKs itself, so the
+    // in-app updater exists only in the GitHub build. Both flavors keep the same
+    // applicationId on purpose: they are one app from two sources, and a user can move
+    // between them when the signing key matches. The updater's code, manifest entries
+    // and FileProvider paths live in src/github; src/fdroid supplies a no-op
+    // UpdateChecker, so the F-Droid APK has no GitHub-Releases networking compiled in.
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("github") {
+            dimension = "distribution"
+            buildConfigField("boolean", "UPDATER_ENABLED", "true")
+        }
+        create("fdroid") {
+            dimension = "distribution"
+            buildConfigField("boolean", "UPDATER_ENABLED", "false")
+        }
+    }
+
+    // F-Droid's scanner rejects this encrypted Google-only blob, and omitting it keeps
+    // the APK reproducible from source alone.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     val keyProps = Properties().apply {
         val f = rootProject.file("key.properties")
         if (f.exists()) FileInputStream(f).use { load(it) }

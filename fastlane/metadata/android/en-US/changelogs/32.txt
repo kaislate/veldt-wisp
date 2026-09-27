@@ -1,0 +1,3 @@
+- Fixed: on Android 13 and 14 the pill no longer blocks taps around it. Its window is now only as big as the pill, as it already was on other Android versions.
+- The icon's dot is now orange, the accent shared with Veldt.
+- Relicensed from MIT to GPL-3.0-or-later.

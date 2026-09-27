@@ -1,0 +1,3 @@
+- Renamed Veldt to Veldt Wisp (display name, notifications, repository). The app ID is unchanged, so it updates in place.
+- The name "Veldt" now belongs to a forthcoming full music player; this app is the standalone pill.
+- The update checker of the GitHub build now targets the renamed kaislate/veldt-wisp repository.
