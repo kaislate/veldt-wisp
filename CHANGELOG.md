@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.4
+
+- **Much smaller download: 55 MB → 4.3 MB.** Release builds are now optimised (R8), with no
+  change in behaviour.
+- The GitHub build's updater skips any F-Droid APK on a release, whatever its name.
+
 ## 0.7.3
 
 - **Coming to F-Droid.** A separate F-Droid build without the in-app updater, which F-Droid

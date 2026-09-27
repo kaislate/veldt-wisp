@@ -77,6 +77,10 @@ No root. No Play Services. No account. No network — except the update check yo
 
 ## 📥 Install
 
+[<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="54">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%20%22com.kaislate.veldt%22%2C%20%22url%22%3A%20%22https%3A%2F%2Fgithub.com%2Fkaislate%2Fveldt-wisp%22%2C%20%22author%22%3A%20%22kaislate%22%2C%20%22name%22%3A%20%22Veldt%20Wisp%22%2C%20%22additionalSettings%22%3A%20%22%7B%5C%22apkFilterRegEx%5C%22%3A%20%5C%22%5Eveldt-wisp-%5B0-9.%5D%2B%5C%5C%5C%5C.apk%24%5C%22%2C%20%5C%22includePrereleases%5C%22%3A%20false%7D%22%7D)
+
+Obtainium keeps Veldt Wisp updated from GitHub releases; the button sets the right APK filter.
+
 Grab the APK from [Releases](../../releases), install it, open **Veldt Wisp**, and grant the three permissions it asks for. Play music. That's it.
 
 ## 🛠️ Build
