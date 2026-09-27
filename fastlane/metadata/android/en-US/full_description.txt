@@ -1,0 +1,30 @@
+<p>Veldt Wisp floats a compact now-playing pill on your screen. Tap it and it morphs, in place, into a full media card with album art, a scrub bar and playback controls. It reads the standard Android media session, so it works with any app that shows a media notification: NewPipe, VLC, AntennaPod, Grayjay, podcast apps and more. No per-app integrations, no accounts.</p>
+
+<p>It was built to bring the "Now Bar" of Samsung's One UI to devices without it, such as a de-Googled LineageOS tablet.</p>
+
+<p><b>Features</b></p>
+<ul>
+<li>Round album art with title and artist, driven entirely by media-session data.</li>
+<li>Expands in place into a media card; tap outside or swipe up to collapse.</li>
+<li>Drag the scrub bar to seek.</li>
+<li>Previous, play/pause and next, plus the playing app's own custom actions. Optional controls on the collapsed pill.</li>
+<li>Wave colours taken from the current artwork, or monochrome.</li>
+<li>Twelve scrub-bar animations and ten whole-card effects.</li>
+<li>Six positions, top or bottom, left, centre or right.</li>
+<li>Hides while the playing app is on screen; optional home-screen-only mode. Flick the pill to the screen edge to tuck it into a notification.</li>
+<li>Only the pill itself takes touches; everything around it stays usable.</li>
+<li>Pure Kotlin and Jetpack Compose, no native code, no Google Play Services.</li>
+</ul>
+
+<p><b>Permissions and why</b></p>
+<ul>
+<li><b>Notification access</b> (required): the only way Android lets an app read and control other apps' media sessions. Wisp uses it to see what is playing and to send play, pause, skip and seek. It looks only at the playing app's own notification, to find its artwork and icon.</li>
+<li><b>Display over other apps</b> (required): to draw the pill on top of other apps.</li>
+<li><b>Usage access</b> (recommended): to tell when the playing app is in the foreground, so the pill can hide there, and to support home-screen-only mode.</li>
+<li><b>Foreground service</b>: keeps the pill alive while media is loaded, with an ongoing notification.</li>
+<li><b>Notifications</b> (Android 13+): so that service notification is visible.</li>
+<li><b>Nearby devices / Bluetooth</b> (optional): only to show your headphones' name in the output-device row.</li>
+<li><b>Internet</b>: some media apps provide their cover art only as a web address; Wisp downloads that image to display it. Nothing else is sent or received: no analytics, no tracking, no account.</li>
+</ul>
+
+<p>Requires Android 10 or newer. No root needed.</p>

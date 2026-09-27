@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- F-Droid build flavor without the in-app updater.
+
 ## 0.7.2
 
 - **Fixed: on Android 13 and 14 the pill no longer blocks taps around it.** The collapsed

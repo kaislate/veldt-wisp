@@ -1,0 +1,1 @@
+A floating now-playing pill for any media app, inspired by One UI's Now Bar
