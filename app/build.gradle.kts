@@ -76,7 +76,11 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // Unshrunk, the release APK was 55 MB, 53 MB of it dex, which is too large
+            // for F-Droid and IzzyOnDroid. R8 keeps only reachable code and resources.
+            // proguard-rules.pro records why no extra keep rules are needed.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
